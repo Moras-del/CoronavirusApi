@@ -1,26 +1,20 @@
 package pl.moras.coronavirusdata.models;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @Builder
-public class CountryCase {
+public class WorldwideCase {
 
-
-
-
-    private String countryName;
     private LocalDate recordDate;
-    private String province;
-    private double latitude;
-    private double longitude;
     private String confirmedCases;
     private String recoveredCases;
     private String deaths;
+    private String increaseRate;
 
 }

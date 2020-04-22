@@ -23,8 +23,8 @@ public class CoronavirusdataApplication {
 
 	@Scheduled(cron = "0 0 * * * *")
 	public void getCountryCsv() {
-		try (BufferedInputStream in = new BufferedInputStream(new URL("https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv").openStream());
-			 FileOutputStream fileOutputStream = new FileOutputStream("countrycases.csv")){
+		try (BufferedInputStream in = new BufferedInputStream(new URL(Consts.COUNTRY_URL).openStream());
+			 FileOutputStream fileOutputStream = new FileOutputStream(Consts.COUNTRY_CSV)){
 			byte[] buffer = new byte[1024];
 			int read;
 			while ((read = in.read(buffer, 0, 1024)) != -1)
@@ -36,8 +36,8 @@ public class CoronavirusdataApplication {
 
 	@Scheduled(cron = "0 0 * * * *")
 	public void getWorldWideCsv(){
-		try(BufferedInputStream in = new BufferedInputStream(new URL("https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwide-aggregated.csv").openStream());
-			FileOutputStream fileOutputStream = new FileOutputStream("worldwidecases.csv")){
+		try(BufferedInputStream in = new BufferedInputStream(new URL(Consts.WORLDWIDE_URL).openStream());
+			FileOutputStream fileOutputStream = new FileOutputStream(Consts.WORLDWIDE_CSV)){
 			byte[] buffer = new byte[1024];
 			int read;
 			while ((read = in.read(buffer, 0, 1024))!=-1)
