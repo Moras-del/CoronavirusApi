@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @Builder
-public class CasesRecord {
+public class CountryCase {
 
     public static final String DATE = "Date";
     public static final String COUNTRY = "Country/Region";

@@ -2,7 +2,7 @@ package pl.moras.coronavirusdata.services;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.moras.coronavirusdata.models.CasesRecord;
+import pl.moras.coronavirusdata.models.CountryCase;
 import pl.moras.coronavirusdata.repo.Repository;
 
 import java.time.LocalDate;
@@ -20,12 +20,12 @@ public class CountriesServiceImpl implements CountriesService {
 
 
     @Override
-    public ResponseEntity<List<CasesRecord>> findByDate(LocalDate localDate) {
+    public ResponseEntity<List<CountryCase>> findByDate(LocalDate localDate) {
         try {
-            List<CasesRecord> list = repository.getCasesPerCountry();
+            List<CountryCase> list = repository.getCasesPerCountry();
             return ResponseEntity.ok(
                         list.parallelStream()
-                            .filter(casesRecord -> casesRecord.getRecordDate().isEqual(localDate))
+                            .filter(countryCase -> countryCase.getRecordDate().isEqual(localDate))
                             .collect(Collectors.toList())
             );
         } catch (Exception e) {
@@ -34,12 +34,12 @@ public class CountriesServiceImpl implements CountriesService {
     }
 
     @Override
-    public ResponseEntity<List<CasesRecord>> findByCountry(String country) {
+    public ResponseEntity<List<CountryCase>> findByCountry(String country) {
         try {
-            List<CasesRecord> list = repository.getCasesPerCountry();
+            List<CountryCase> list = repository.getCasesPerCountry();
             return ResponseEntity.ok(
                         list.parallelStream()
-                            .filter(casesRecord -> casesRecord.getCountryName().equalsIgnoreCase(country))
+                            .filter(countryCase -> countryCase.getCountryName().equalsIgnoreCase(country))
                             .collect(Collectors.toList())
             );
         }catch (Exception e){

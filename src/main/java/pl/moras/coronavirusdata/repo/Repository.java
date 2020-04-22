@@ -4,7 +4,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Component;
-import pl.moras.coronavirusdata.models.CasesRecord;
+import pl.moras.coronavirusdata.models.CountryCase;
 
 import java.io.FileReader;
 import java.time.LocalDate;
@@ -14,8 +14,8 @@ import java.util.List;
 @Component
 public class Repository {
 
-    public List<CasesRecord> getCasesPerCountry() throws Exception {
-        List<CasesRecord> list = new ArrayList<>();
+    public List<CountryCase> getCasesPerCountry() throws Exception {
+        List<CountryCase> list = new ArrayList<>();
         CSVParser parse = CSVFormat.DEFAULT
                 .withDelimiter(",".charAt(0))
                 .withFirstRecordAsHeader()
@@ -27,17 +27,17 @@ public class Repository {
     }
 
 
-    private CasesRecord buildCountryCase(CSVRecord record){
-        return CasesRecord
+    private CountryCase buildCountryCase(CSVRecord record){
+        return CountryCase
                 .builder()
-                .countryName(record.get(CasesRecord.COUNTRY))
-                .confirmedCases(record.get(CasesRecord.CONFIRMED_CASES))
-                .deaths(record.get(CasesRecord.DEATHS))
-                .latitude(Double.parseDouble(record.get(CasesRecord.LATITUDE)))
-                .longitude(Double.parseDouble(record.get(CasesRecord.LONGITUDE)))
-                .province(record.get(CasesRecord.PROVINCE))
-                .recordDate(LocalDate.parse(record.get(CasesRecord.DATE)))
-                .recoveredCases(record.get(CasesRecord.RECOVERED_CASES))
+                .countryName(record.get(CountryCase.COUNTRY))
+                .confirmedCases(record.get(CountryCase.CONFIRMED_CASES))
+                .deaths(record.get(CountryCase.DEATHS))
+                .latitude(Double.parseDouble(record.get(CountryCase.LATITUDE)))
+                .longitude(Double.parseDouble(record.get(CountryCase.LONGITUDE)))
+                .province(record.get(CountryCase.PROVINCE))
+                .recordDate(LocalDate.parse(record.get(CountryCase.DATE)))
+                .recoveredCases(record.get(CountryCase.RECOVERED_CASES))
                 .build();
     }
 

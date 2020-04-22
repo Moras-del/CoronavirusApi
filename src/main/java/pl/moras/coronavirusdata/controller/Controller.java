@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.moras.coronavirusdata.models.CasesRecord;
+import pl.moras.coronavirusdata.models.CountryCase;
 import pl.moras.coronavirusdata.services.CountriesService;
 
 import java.time.LocalDate;
@@ -24,12 +24,12 @@ public class Controller {
 
 
     @GetMapping(params = "date")
-    public ResponseEntity<List<CasesRecord>> findByDate(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
+    public ResponseEntity<List<CountryCase>> findByDate(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
         return service.findByDate(date);
     }
 
     @GetMapping(params = "country")
-    public ResponseEntity<List<CasesRecord>> findByCountry(@RequestParam String country){
+    public ResponseEntity<List<CountryCase>> findByCountry(@RequestParam String country){
         return service.findByCountry(country);
     }
 }
