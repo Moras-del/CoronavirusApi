@@ -1,0 +1,59 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xmlns:int-file="http://www.springframework.org/schema/integration/file"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/integration
+       http://www.springframework.org/schema/integration/spring-integration.xsd
+       http://www.springframework.org/schema/integration/http
+       http://www.springframework.org/schema/integration/http/spring-integration-http.xsd
+       http://www.springframework.org/schema/integration/file
+       http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
+
+    <int:channel id="country_request"/>
+    <int:channel id="country_response"/>
+
+    <int:channel id="worldwide_request"/>
+    <int:channel id="worldwide_response"/>
+
+    <int:gateway
+        default-request-channel="country_request"
+        service-interface="pl.moras.coronavirusdata.gateways.CountryCases"
+        default-payload-expression="new java.util.Date()"/>
+
+    <int:gateway
+            default-request-channel="worldwide_request"
+            service-interface="pl.moras.coronavirusdata.gateways.Worldwide"
+            default-payload-expression="new java.util.Date()"/>
+
+    <int-http:outbound-gateway id="country_gateway"
+                               request-channel="country_request"
+                               url="https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv"
+                               http-method="GET"
+                               expected-response-type="java.lang.String"
+                               charset="UTF-8"
+                               reply-channel="country_response"/>
+
+    <int-http:outbound-gateway id="worldwide_gateway"
+                               request-channel="worldwide_request"
+                               url="https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwide-aggregated.csv"
+                               http-method="GET"
+                               expected-response-type="java.lang.String"
+                               charset="UTF-8"
+                               reply-channel="worldwide_response"/>
+
+    <int-file:outbound-channel-adapter
+            id="country_file"
+            channel="country_response"
+            filename-generator-expression="'countrycases.csv'"
+            directory="${user.dir}"/>
+
+    <int-file:outbound-channel-adapter
+            id="worldwide_file"
+            channel="worldwide_response"
+            filename-generator-expression="'worldwidecases.csv'"
+            directory="${user.dir}"/>
+
+</beans>

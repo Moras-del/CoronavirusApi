@@ -1,10 +1,20 @@
 package pl.moras.coronavirusdata;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.integration.http.outbound.HttpRequestExecutingMessageHandler;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.PollableChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import pl.moras.coronavirusdata.gateways.CountryCases;
+import pl.moras.coronavirusdata.gateways.Worldwide;
+import pl.moras.coronavirusdata.models.WorldwideCase;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -16,6 +26,11 @@ import java.net.URL;
 @EnableAsync
 public class CoronavirusdataApplication {
 
+	@Autowired
+	private CountryCases countryCases;
+
+	@Autowired
+	private Worldwide worldwide;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoronavirusdataApplication.class, args);
@@ -23,27 +38,11 @@ public class CoronavirusdataApplication {
 
 	@Scheduled(cron = "0 0 * * * *")
 	public void getCountryCsv() {
-		try (BufferedInputStream in = new BufferedInputStream(new URL(Consts.COUNTRY_URL).openStream());
-			 FileOutputStream fileOutputStream = new FileOutputStream(Consts.COUNTRY_CSV)){
-			byte[] buffer = new byte[1024];
-			int read;
-			while ((read = in.read(buffer, 0, 1024)) != -1)
-				fileOutputStream.write(buffer, 0, read);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		countryCases.getData();
 	}
 
 	@Scheduled(cron = "0 0 * * * *")
-	public void getWorldWideCsv(){
-		try(BufferedInputStream in = new BufferedInputStream(new URL(Consts.WORLDWIDE_URL).openStream());
-			FileOutputStream fileOutputStream = new FileOutputStream(Consts.WORLDWIDE_CSV)){
-			byte[] buffer = new byte[1024];
-			int read;
-			while ((read = in.read(buffer, 0, 1024))!=-1)
-				fileOutputStream.write(buffer, 0, read);
-		}catch (IOException e){
-			e.printStackTrace();
-		}
+	public void getWorldWideCsv() {
+		worldwide.getData();
 	}
 }
