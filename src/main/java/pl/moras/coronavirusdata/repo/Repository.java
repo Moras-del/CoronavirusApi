@@ -3,6 +3,7 @@ package pl.moras.coronavirusdata.repo;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pl.moras.coronavirusdata.Consts;
 import pl.moras.coronavirusdata.models.CountryCase;
@@ -17,12 +18,19 @@ import java.util.List;
 @Component
 public class Repository {
 
+    @Value("${country-file}")
+    private String countryFilename;
+
+    @Value("${worldwide-file}")
+    private String worldwideFilename;
+
+
     public List<CountryCase> getCasesPerCountry() throws IOException {
         List<CountryCase> list = new ArrayList<>();
         CSVParser parser = CSVFormat.DEFAULT
                 .withDelimiter(",".charAt(0))
                 .withFirstRecordAsHeader()
-                .parse(new FileReader(Consts.COUNTRY_CSV));
+                .parse(new FileReader(countryFilename));
         for (CSVRecord record: parser.getRecords()){
             list.add(buildCountryCase(record));
         }
@@ -34,7 +42,7 @@ public class Repository {
         CSVParser parser = CSVFormat.DEFAULT
                 .withDelimiter(",".charAt(0))
                 .withFirstRecordAsHeader()
-                .parse(new FileReader(Consts.WORLDWIDE_CSV));
+                .parse(new FileReader(worldwideFilename));
         for (CSVRecord record : parser.getRecords()){
             list.add(buildWorldwideCase(record));
         }

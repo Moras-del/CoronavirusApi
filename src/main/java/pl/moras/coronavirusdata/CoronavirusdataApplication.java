@@ -1,36 +1,23 @@
 package pl.moras.coronavirusdata;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.integration.http.outbound.HttpRequestExecutingMessageHandler;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.PollableChannel;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import pl.moras.coronavirusdata.gateways.CountryCases;
-import pl.moras.coronavirusdata.gateways.Worldwide;
-import pl.moras.coronavirusdata.models.WorldwideCase;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
+import pl.moras.coronavirusdata.gateways.CountryGateway;
+import pl.moras.coronavirusdata.gateways.WorldwideGateway;
 
 @SpringBootApplication
-@EnableAsync
+@EnableScheduling
 public class CoronavirusdataApplication {
 
 	@Autowired
-	private CountryCases countryCases;
+	private CountryGateway countryGateway;
 
 	@Autowired
-	private Worldwide worldwide;
+	private WorldwideGateway worldwideGateway;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoronavirusdataApplication.class, args);
@@ -38,11 +25,11 @@ public class CoronavirusdataApplication {
 
 	@Scheduled(cron = "0 0 * * * *")
 	public void getCountryCsv() {
-		countryCases.getData();
+		countryGateway.sendRequest();
 	}
 
 	@Scheduled(cron = "0 0 * * * *")
 	public void getWorldWideCsv() {
-		worldwide.getData();
+		worldwideGateway.sendRequest();
 	}
 }

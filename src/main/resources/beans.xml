@@ -20,17 +20,17 @@
 
     <int:gateway
         default-request-channel="country_request"
-        service-interface="pl.moras.coronavirusdata.gateways.CountryCases"
+        service-interface="pl.moras.coronavirusdata.gateways.CountryGateway"
         default-payload-expression="new java.util.Date()"/>
 
     <int:gateway
             default-request-channel="worldwide_request"
-            service-interface="pl.moras.coronavirusdata.gateways.Worldwide"
+            service-interface="pl.moras.coronavirusdata.gateways.WorldwideGateway"
             default-payload-expression="new java.util.Date()"/>
 
     <int-http:outbound-gateway id="country_gateway"
                                request-channel="country_request"
-                               url="https://raw.githubusercontent.com/datasets/covid-19/master/data/time-series-19-covid-combined.csv"
+                               url="${country-url}"
                                http-method="GET"
                                expected-response-type="java.lang.String"
                                charset="UTF-8"
@@ -38,7 +38,7 @@
 
     <int-http:outbound-gateway id="worldwide_gateway"
                                request-channel="worldwide_request"
-                               url="https://raw.githubusercontent.com/datasets/covid-19/master/data/worldwide-aggregated.csv"
+                               url="${worldwide-url}"
                                http-method="GET"
                                expected-response-type="java.lang.String"
                                charset="UTF-8"
@@ -47,13 +47,13 @@
     <int-file:outbound-channel-adapter
             id="country_file"
             channel="country_response"
-            filename-generator-expression="'countrycases.csv'"
+            filename-generator-expression="'${country-file}'"
             directory="${user.dir}"/>
 
     <int-file:outbound-channel-adapter
             id="worldwide_file"
             channel="worldwide_response"
-            filename-generator-expression="'worldwidecases.csv'"
+            filename-generator-expression="'${worldwide-file}'"
             directory="${user.dir}"/>
 
 </beans>
