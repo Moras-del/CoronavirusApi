@@ -12,48 +12,26 @@
        http://www.springframework.org/schema/integration/file
        http://www.springframework.org/schema/integration/file/spring-integration-file.xsd">
 
-    <int:channel id="country_request"/>
-    <int:channel id="country_response"/>
-
-    <int:channel id="worldwide_request"/>
-    <int:channel id="worldwide_response"/>
+    <int:channel id="request"/>
+    <int:channel id="response"/>
 
     <int:gateway
-        default-request-channel="country_request"
-        service-interface="pl.moras.coronavirusdata.gateways.CountryGateway"
+        default-request-channel="request"
+        service-interface="pl.moras.coronavirusdata.gateway.Gateway"
         default-payload-expression="new java.util.Date()"/>
 
-    <int:gateway
-            default-request-channel="worldwide_request"
-            service-interface="pl.moras.coronavirusdata.gateways.WorldwideGateway"
-            default-payload-expression="new java.util.Date()"/>
-
-    <int-http:outbound-gateway id="country_gateway"
-                               request-channel="country_request"
-                               url="${country-url}"
+    <int-http:outbound-gateway id="request-gateway"
+                               request-channel="request"
+                               url="${url}"
                                http-method="GET"
                                expected-response-type="java.lang.String"
                                charset="UTF-8"
-                               reply-channel="country_response"/>
-
-    <int-http:outbound-gateway id="worldwide_gateway"
-                               request-channel="worldwide_request"
-                               url="${worldwide-url}"
-                               http-method="GET"
-                               expected-response-type="java.lang.String"
-                               charset="UTF-8"
-                               reply-channel="worldwide_response"/>
+                               reply-channel="response"/>
 
     <int-file:outbound-channel-adapter
-            id="country_file"
-            channel="country_response"
-            filename-generator-expression="'${country-file}'"
-            directory="${user.dir}"/>
-
-    <int-file:outbound-channel-adapter
-            id="worldwide_file"
-            channel="worldwide_response"
-            filename-generator-expression="'${worldwide-file}'"
+            id="file"
+            channel="response"
+            filename-generator-expression="'${file}'"
             directory="${user.dir}"/>
 
 </beans>

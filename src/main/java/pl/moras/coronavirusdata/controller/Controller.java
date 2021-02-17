@@ -1,45 +1,43 @@
 package pl.moras.coronavirusdata.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pl.moras.coronavirusdata.gateways.WorldwideGateway;
-import pl.moras.coronavirusdata.models.CountryCase;
-import pl.moras.coronavirusdata.models.WorldwideCase;
-import pl.moras.coronavirusdata.services.CountriesService;
-import pl.moras.coronavirusdata.services.WorldwideService;
+import pl.moras.coronavirusdata.model.Case;
+import pl.moras.coronavirusdata.services.CaseService;
+import pl.moras.coronavirusdata.services.Sort;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/cases")
 public class Controller {
 
-    private CountriesService countryService;
-    private WorldwideService worldwideService;
+    private CaseService countryService;
 
-    public Controller(CountriesService countryService, WorldwideService worldwideService) {
+    public Controller(CaseService countryService) {
         this.countryService = countryService;
-        this.worldwideService = worldwideService;
     }
 
-    @GetMapping(params = "date")
-    public ResponseEntity<List<CountryCase>> findByDate(@RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date) {
-        return countryService.findByDate(date);
+    @GetMapping
+    public List<Case> getCases(@RequestParam Optional<String> country,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Optional<LocalDate> from,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") Optional<LocalDate> to,
+            @RequestParam("sortBy") Optional<Sort> sort){
+        List<Case> cases = countryService.findAll().orElseThrow(()-> new RuntimeException("invalid fetch from third-party service"));
+        if (country.isPresent())
+            cases = countryService.findByCountry(cases, country.get());
+        if (from.isPresent())
+            cases = countryService.findByDateFrom(cases, from.get());
+        if (to.isPresent())
+            cases = countryService.findByDateTo(cases, to.get());
+        if (sort.isPresent())
+            cases = countryService.sortBy(cases, sort.get());
+        return cases;
     }
 
-    @GetMapping(params = "country")
-    public ResponseEntity<List<CountryCase>> findByCountry(@RequestParam String country){
-        return countryService.findByCountry(country);
-    }
-
-    @GetMapping("/worldwide")
-    public ResponseEntity<List<WorldwideCase>> getWorldWideCases(){
-        return worldwideService.getAll();
-    }
 }
